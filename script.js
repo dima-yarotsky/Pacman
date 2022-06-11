@@ -789,22 +789,14 @@ document.addEventListener("DOMContentLoaded", () => {
         1,
         1,
     ];
-    // 0 - pac-dots
-    // 1 - wall
-    // 2 - ghost-lair
-    // 3 - power-pellet
-    // 4 - empty
 
     const squares = [];
-
-    //create your board
     function createBoard() {
         for (let i = 0; i < layout.length; i++) {
             const square = document.createElement("div");
             grid.appendChild(square);
             squares.push(square);
 
-            //add layout to the board
             if (layout[i] === 0) {
                 squares[i].classList.add("pac-dot");
             } else if (layout[i] === 1) {
@@ -818,8 +810,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     createBoard();
 
-    //create Characters
-    //draw pacman onto the board
     let pacmanCurrentIndex = 490;
     let pacmanVelocity = {
         x: 0,
@@ -827,14 +817,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const pacmanSpeed = 200;
     squares[pacmanCurrentIndex].classList.add("pac-man");
-    //get the coordinates of pacman on the grid with X and Y axis
-    // function getCoordinates(index) {
-    //   return [index % width, Math.floor(index / width)]
-    // }
+    get the coordinates of pacman on the grid with X and Y axis
+     function getCoordinates(index) {
+       return [index % width, Math.floor(index / width)]
+     }
 
-    // console.log(getCoordinates(pacmanCurrentIndex))
+    console.log(getCoordinates(pacmanCurrentIndex))
 
-    // set pacman velocity
+    set pacman velocity
     function setPacmanVelocity(e) {
         switch (e.keyCode) {
             case 37:
@@ -882,7 +872,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(pacmanVelocity, e.keyCode);
     }
 
-    //move pacman
     function movePacman() {
         squares[pacmanCurrentIndex].classList.remove("pac-man");
         setInterval(() => {
@@ -942,7 +931,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, pacmanSpeed);
     }
 
-    // what happens when you eat a pac-dot
     function pacDotEaten() {
         if (squares[pacmanCurrentIndex].classList.contains("pac-dot")) {
             score++;
@@ -959,7 +947,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    //what happens when you eat a power-pellet
     function powerPelletEaten() {
         if (squares[pacmanCurrentIndex].classList.contains("power-pellet")) {
             score += 10;
@@ -969,13 +956,10 @@ document.addEventListener("DOMContentLoaded", () => {
             checkForWin();
         }
     }
-
-    //make the ghosts stop flashing
     function unScareGhosts() {
         ghosts.forEach((ghost) => (ghost.isScared = false));
     }
 
-    //create ghosts using Constructors
     class Ghost {
         constructor(className, startIndex, speed) {
             this.className = className;
@@ -987,7 +971,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    //all my ghosts
     ghosts = [
         new Ghost("blinky", 348, 100),
         new Ghost("stinky", 376, 400),
@@ -995,7 +978,6 @@ document.addEventListener("DOMContentLoaded", () => {
         new Ghost("clyde", 379, 200),
     ];
 
-    //draw my ghosts onto the grid
     ghosts.forEach((ghost) => {
         squares[ghost.currentIndex].classList.add(ghost.className);
         squares[ghost.currentIndex].classList.add("ghost");
@@ -1006,26 +988,19 @@ document.addEventListener("DOMContentLoaded", () => {
         let direction = directions[Math.floor(Math.random() * directions.length)];
 
         ghost.timerId = setInterval(function () {
-            //if the next square your ghost is going to go to does not have a ghost and does not have a wall
             if (
                 !squares[ghost.currentIndex + direction].classList.contains("ghost") &&
                 !squares[ghost.currentIndex + direction].classList.contains("wall")
             ) {
-                //remove the ghosts classes
                 squares[ghost.currentIndex].classList.remove(ghost.className);
                 squares[ghost.currentIndex].classList.remove("ghost", "scared-ghost");
-                //move into that space
                 ghost.currentIndex += direction;
                 squares[ghost.currentIndex].classList.add(ghost.className, "ghost");
-                //else find a new random direction to go in
             } else direction = directions[Math.floor(Math.random() * directions.length)];
 
-            //if the ghost is currently scared
             if (ghost.isScared) {
                 squares[ghost.currentIndex].classList.add("scared-ghost");
             }
-
-            //if the ghost is currently scared and pacman is on it
             if (
                 ghost.isScared &&
                 squares[ghost.currentIndex].classList.contains("pac-man")
@@ -1043,7 +1018,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, ghost.speed);
     }
 
-    //check for a game over
     function checkForGameOver() {
         if (
             squares[pacmanCurrentIndex].classList.contains("ghost") &&
@@ -1053,7 +1027,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.removeEventListener("keyup", movePacman);
             pacmanVelocity.x = 0;
             pacmanVelocity.y = 0;
-            //display game over screen and refresh after 3s to rest game
             document.getElementById("game-over-screen").style.display = "flex";
             setTimeout(function () {
                 window.location.reload();
@@ -1061,14 +1034,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    //check for a win - more is when this score is reached
     function checkForWin() {
         if (score === 274) {
             ghosts.forEach((ghost) => clearInterval(ghost.timerId));
             document.removeEventListener("keyup", movePacman);
             pacmanVelocity.x = 0;
             pacmanVelocity.y = 0;
-            //display you won screen and refresh after 3s to rest game
             document.getElementById("you-won-screen").style.display = "flex";
             setTimeout(function () {
                 window.location.reload();
@@ -1076,16 +1047,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    //start the game when enter is pressed
     function startGame(event) {
         if (event.keyCode === 13) {
             document.removeEventListener("keydown", startGame);
-            //remove start screen
             document.getElementById("start-screen").style.display = "none";
-            //set pacman velocity and enable movement
             document.addEventListener("keyup", setPacmanVelocity);
             movePacman();
-            // move the Ghosts randomly
             ghosts.forEach((ghost) => moveGhost(ghost));
         }
     }
